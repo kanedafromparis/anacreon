@@ -1,0 +1,20 @@
+{
+     "port" : 8889,
+     "webhook":
+    {
+        "server" : {
+            "name":"192.168.99.100",
+            "port":443,
+            "pemCertPath":/Users/csabourdin/Desktop/localminishift.crt.pem
+         },
+
+        "44D3C8D7-9D8A-4BDD-990C-AD76C43C4E03": {
+            "namespace" : "infra-anacreon-dev-ags-fr",
+            "bc-generic-webhook-uri":"buildconfigs/testing/webhooks/a6dedc8d8abbf931/generic"
+        },
+        "C9C52CEF-F0A6-47E3-A861-3DB99E609301": {
+            "namespace" : "infra-anacreon-dev-ags-fr",
+            "bc-generic-webhook-uri":"buildconfigs/testing/webhooks/a6dedc8d8abbf931/generic"
+        }
+    }
+}
