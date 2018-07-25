@@ -22,8 +22,18 @@ import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.UUID;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.codec.binary.Hex;
 
 /**
  *
@@ -44,6 +54,11 @@ public class BuildCallVerticle extends AbstractVerticle implements Handler<Routi
     public static final String SSL = "ssl";
     public static final String TRUSTALL = "trustall";
     public static final String PEMCERTPATH = "pemcertpath";
+    private static final String PAYLOAD_SECRET = "payloadSecret";
+
+    private static final String VALIDATE_PAYLOAD = "validatePayload";
+    
+    private static final String X_HUB_SIGNATURE = "X-Hub-Signature";
 
     private HttpServer server;
 
@@ -178,45 +193,82 @@ public class BuildCallVerticle extends AbstractVerticle implements Handler<Routi
             routingContext.response()
                     .setStatusCode(500)
                     .end();
+            return;
 
         }
 
         String fullURL = this.getFullURL(idBuild);
+        WebClientOptions options = configureWebOptions(config().getJsonObject(WEBHOOK, new JsonObject()).getJsonObject(SERVER, new JsonObject()));
 
         // 404 Not Found if log level is INFO otherwise 406
         if (StringUtils.EMPTY.equals(fullURL)) {
             responseEmpty(response);
         } else {
-            //@Todo add that form configuration
-            WebClientOptions options = configureWebOptions(config().getJsonObject(WEBHOOK, new JsonObject()).getJsonObject(SERVER, new JsonObject()));
+
+            // check X-Hub-Signature
+            if (config().getJsonObject(WEBHOOK, new JsonObject()).getJsonObject(idBuild, new JsonObject()).containsKey(PAYLOAD_SECRET)) {
+
+                String payload = config().getJsonObject(WEBHOOK, new JsonObject()).getJsonObject(idBuild, new JsonObject()).getString(PAYLOAD_SECRET, StringUtils.EMPTY);
+
+                try {
+                    String passedSignature = StringUtils.substring(routingContext.request().getHeader(X_HUB_SIGNATURE), 5);
+                    Mac hmac = Mac.getInstance("HmacSHA1");
+                    hmac.init(new SecretKeySpec(payload.getBytes(Charset.forName("UTF-8")), "HmacSHA1"));
+                    String calculatedSignature = Hex.encodeHexString(hmac.doFinal(routingContext.getBodyAsString("UTF-8").getBytes("UTF-8")));
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Calculated sigSHA1: {0} , passedSignature: {1} for payload {2} ", calculatedSignature, passedSignature, payload);
+                    } else {
+                        LOG.info("Calculated sigSHA1: {0} , passedSignature: {1}", calculatedSignature, passedSignature);
+                        LOG.warn("Calculated sigSHA1: {0} , passedSignature: {1}", calculatedSignature, passedSignature);
+                    }
+                    if (config().getJsonObject(WEBHOOK, new JsonObject()).getJsonObject(idBuild, new JsonObject())
+                            .getBoolean(VALIDATE_PAYLOAD, Boolean.FALSE)
+                            && !StringUtils.equals(passedSignature, calculatedSignature)) {
+                        LOG.warn("{2} is true and calculated sigSHA1: {0} not equal to  passedSignature: {1}", calculatedSignature, passedSignature, VALIDATE_PAYLOAD);
+                        response
+                                .setStatusCode(417)
+                                .putHeader("content-type", "application/json; charset=utf-8")
+                                .end();
+                        return;
+                    }                    
+                } catch (NoSuchAlgorithmException ex) {
+                    LOG.error(ex);
+                } catch (InvalidKeyException ex) {
+                    LOG.error(ex);
+                } catch (UnsupportedEncodingException ex) {
+                    LOG.error(ex);
+                }
+            }
+
+
 
             WebClient client = WebClient.create(vertx, options);
             LOG.debug("Calling : {0}", fullURL);
             //HttpRequest<JsonObject> postAbs = 
             client
                     .postAbs(fullURL)
+                    .putHeader(X_HUB_SIGNATURE, routingContext.request().getHeader(X_HUB_SIGNATURE))
                     .followRedirects(true)
-                    .send(//(Handler<AsyncResult<HttpResponse<T>
-                            ar
-                            -> {
-                        if (ar.succeeded()) {
-                            HttpResponse<Buffer> resp = ar.result();
-                            LOG.info("Got HTTP response with status {0} with data {1}",
-                                    resp.statusCode(),
-                                    resp.body().toString("ISO-8859-1"));
-                            response
-                                    .setStatusCode(202)
-                                    .putHeader("content-type", "application/json; charset=utf-8")
-                                    .write(resp.body())
-                                    .end();
-                        } else {
-                            LOG.warn("Error on call : {0}", fullURL);
-                            response
-                                    .setStatusCode(500)
-                                    .putHeader("content-type", "application/json; charset=utf-8")
-                                    .end();
-                        }
-                    });
+                    .sendJson(routingContext.getBodyAsJson(),//(Handler<AsyncResult<HttpResponse<T>
+                            ar -> {
+                                if (ar.succeeded()) {
+                                    HttpResponse<Buffer> resp = ar.result();
+                                    LOG.info("Got HTTP response with status {0} with data {1}",
+                                            resp.statusCode(),
+                                            resp.body().toString("UTF-8"));
+
+                                    response
+                                            .setStatusCode(202)
+                                            .putHeader("content-type", "application/json; charset=utf-8")
+                                            .end(resp.body());
+                                } else {
+                                    LOG.warn("Error on call : {0}", fullURL);
+                                    response
+                                            .setStatusCode(500)
+                                            .putHeader("content-type", "application/json; charset=utf-8")
+                                            .end();
+                                }
+                            });
         }
     }
 

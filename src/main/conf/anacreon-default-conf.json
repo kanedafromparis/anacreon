@@ -6,12 +6,22 @@
             "name":"192.168.64.7",
             "port":8443,
             "ssl": {
-                "trustall":false,
-                "pemcertpath": "/opt/anacreon/crt/localminishift-3.9.crt.pem"
+                "trustall":true
             }
          },
 
         "44D3C8D7-9D8A-4BDD-990C-AD76C43C4E03": {
+            "namespace" : "infra-anacreon-dev-ags-fr",
+            "bc-generic-webhook-uri":"buildconfigs/testing/webhooks/cb6c50e21a5c81d4/generic"
+        },
+        "44D3C8D7-5555-4BDD-990C-AD76C43C4E03": {
+            "payload":"123456",
+            "namespace" : "infra-anacreon-dev-ags-fr",
+            "bc-generic-webhook-uri":"buildconfigs/testing/webhooks/cb6c50e21a5c81d4/generic"
+        },
+        "44D3C8D7-4444-4BDD-990C-AD76C43C4E03": {
+            "payloadSecret":"123456",
+            "validatePayload":true,
             "namespace" : "infra-anacreon-dev-ags-fr",
             "bc-generic-webhook-uri":"buildconfigs/testing/webhooks/cb6c50e21a5c81d4/generic"
         }

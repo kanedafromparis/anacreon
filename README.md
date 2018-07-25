@@ -25,16 +25,19 @@ mvn package docker:build docker:run
 
 |  object                                                              |      value        |  Description                                                       | Example          |
 |----------------------------------------------------------------------|:-----------------:|--------------------------------------------------------------------|-----------------:|
-| port                                                                 |  Integer          |  application listening port                                        |  8080            |
+| port                                                                 |  Integer          |  application listening port                                        | 8080             |
 | webhook                                                              |  JsonObject       |                                                                    |                  |
-| webhook.server.name                                                  |  String           | servername or IP of openshift                                      | api.server.com   |
+| webhook.server.name                                                  |  String           | servername or IP of openshift                                      | "api.server.com" |
 | webhook.server.port                                                  |  Integer          | openshift  listening port                                          | 443              |
 | webhook.server.ssl                                                   |  JsonObject       | ssl client configuration                                           |                  |
 | webhook.server.ssl.trustall                                          |  Boolean          | This configuration is to skip ssl validation                       |                  |
 | webhook.server.ssl.pemcertpath                                       |  String (FileURI) | This is the path to the accepted server certificats in PEM format  |                  |
 | webhook.XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX                         |  JsonObject       |                                                                    |                  |
 | webhook.XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.namespace               |  String           | This is the project namespece to call for buills                   | infra-anacreon-dev-ags-fr                |
-| webhook.XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.bc-generic-webhook-uri  |  JsonObject       |  his is the build webhook URI                                      | "buildconfigs/testing/webhooks/cb6c50e21a5c81d4/generic" |
+| webhook.XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.bc-generic-webhook-uri  |  JsonObject       | This is the build webhook URI                                      | "buildconfigs/testing/webhooks/cb6c50e21a5c81d4/generic" |
+| webhook.XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.payloadSecret           |  String           | This is the secret defined in the github Webhook                   | "MyS3cr3t5**"    |
+| webhook.XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.validatePayload         |  Boolean          | This flag (if true) enforce validation of X-Hub-Signature signature| true             |
+
 
 ### logging.properties
 
@@ -181,15 +184,26 @@ data:
      "port" : 8080,
      "webhook": {
         "server" : {
-            "name":"192.168.64.7", ## This is the openshift server to call [manatory]
-            "port":8443, //This is the port used by the openshift server to call [default: 443]
+            "name":"192.168.64.7",
+            "port":8443, 
             "ssl": {
-                "trustall":false, //This is to skip ssl valisation [default: false]
-                "pemcertpath": "/opt/anacreon/crt/localminishift-3.9.crt.pem" //This is the path to the accepted server certificats in PEM format []
+                "trustall":false, 
+                "pemcertpath": "/opt/anacreon/crt/localminishift-3.9.crt.pem"
             }
          },
 
-        "44D3C8D7-9D8A-4BDD-990C-AD76C43C4E03": { // This i
+        "44D3C8D7-9D8A-4BDD-990C-AD76C43C4E03": { 
+            "namespace" : "infra-anacreon-dev-ags-fr",
+            "bc-generic-webhook-uri":"buildconfigs/testing/webhooks/cb6c50e21a5c81d4/generic"
+        },
+        "5EDEAF4C-8E1D-4024-86D7-2FB0EF03ABD3": { 
+          "payloadSecret":"Phi8jee4zah6aix0ohBie6xe",
+            "validatePayload":true,
+            "namespace" : "infra-anacreon-dev-ags-fr",
+            "bc-generic-webhook-uri":"buildconfigs/testing/webhooks/cb6c50e21a5c81d4/generic"
+        },
+        "4A7741CF-5AAA-4FAE-8ECC-8BC0F728D3CE": { 
+            "payloadSecret":"yohquahm7aixeeWof9NaeXoh",
             "namespace" : "infra-anacreon-dev-ags-fr",
             "bc-generic-webhook-uri":"buildconfigs/testing/webhooks/cb6c50e21a5c81d4/generic"
         }
