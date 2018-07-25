@@ -23,20 +23,22 @@ mvn package docker:build docker:run
 
 ### anacreon-default-conf.json
 
-|  object                                                              |      value        |  Description                                                       | Example          |
-|----------------------------------------------------------------------|:-----------------:|--------------------------------------------------------------------|-----------------:|
-| port                                                                 |  Integer          |  application listening port                                        | 8080             |
-| webhook                                                              |  JsonObject       |                                                                    |                  |
-| webhook.server.name                                                  |  String           | servername or IP of openshift                                      | "api.server.com" |
-| webhook.server.port                                                  |  Integer          | openshift  listening port                                          | 443              |
-| webhook.server.ssl                                                   |  JsonObject       | ssl client configuration                                           |                  |
-| webhook.server.ssl.trustall                                          |  Boolean          | This configuration is to skip ssl validation                       |                  |
-| webhook.server.ssl.pemcertpath                                       |  String (FileURI) | This is the path to the accepted server certificats in PEM format  |                  |
-| webhook.XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX                         |  JsonObject       |                                                                    |                  |
-| webhook.XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.namespace               |  String           | This is the project namespece to call for buills                   | infra-anacreon-dev-ags-fr                |
-| webhook.XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.bc-generic-webhook-uri  |  JsonObject       | This is the build webhook URI                                      | "buildconfigs/testing/webhooks/cb6c50e21a5c81d4/generic" |
-| webhook.XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.payloadSecret           |  String           | This is the secret defined in the github Webhook                   | "MyS3cr3t5**"    |
-| webhook.XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.validatePayload         |  Boolean          | This flag (if true) enforce validation of X-Hub-Signature signature| true             |
+|  object                                                                 |      value        |  Description                                                       | Example          |
+|-------------------------------------------------------------------------|:-----------------:|--------------------------------------------------------------------|-----------------:|
+| port                                                                    |  Integer          |  application listening port                                        | 8080             |
+| webhook                                                                 |  JsonObject       |                                                                    |                  |
+| webhook.server.name                                                     |  String           | servername or IP of openshift                                      | "api.server.com" |
+| webhook.server.port                                                     |  Integer          | openshift  listening port                                          | 443              |
+| webhook.server.ssl                                                      |  JsonObject       | ssl client configuration                                           |                  |
+| webhook.server.ssl.trustall                                             |  Boolean          | This configuration is to skip ssl validation                       |                  |
+| webhook.server.ssl.pemcertpath                                          |  String (FileURI) | This is the path to the accepted server certificats in PEM format  |                  |
+| webhook.XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX                            |  JsonObject       |                                                                    |                  |
+| webhook.XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.namespace                  |  String           | This is the project namespece to call for buills                   | infra-anacreon-dev-ags-fr                |
+| webhook.XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.bc-generic-webhook-uri     |  JsonObject       | This is the build webhook URI                                      | "buildconfigs/testing/webhooks/cb6c50e21a5c81d4/generic" |
+| webhook.XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.payloadSecret              |  String           | This is the secret defined in the github Webhook                   | "MyS3cr3t5**"    |
+| webhook.XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.validatePayload            |  Boolean          | This flag (if true) enforce validation of X-Hub-Signature signature| true             |
+| webhook.XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.expectedHeader             |  JsonObject       | This optional configuration allow to check specific header value   | true             |
+| webhook.XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.expectedHeader.YYY         |  String           | This define the value expecte for header YYY                       | push  (for YYY=X-GitHub-Event  |
 
 
 ### logging.properties

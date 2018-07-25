@@ -14,14 +14,22 @@
             "namespace" : "infra-anacreon-dev-ags-fr",
             "bc-generic-webhook-uri":"buildconfigs/testing/webhooks/cb6c50e21a5c81d4/generic"
         },
-        "44D3C8D7-5555-4BDD-990C-AD76C43C4E03": {
+        "8D84E7CF-D825-4573-88EA-F5355E803EED": {
             "payload":"123456",
             "namespace" : "infra-anacreon-dev-ags-fr",
             "bc-generic-webhook-uri":"buildconfigs/testing/webhooks/cb6c50e21a5c81d4/generic"
         },
-        "44D3C8D7-4444-4BDD-990C-AD76C43C4E03": {
+        "30FA7A6E-C2BE-45C3-BFEC-FCA8CB00480E": {
             "payloadSecret":"123456",
             "validatePayload":true,
+            "namespace" : "infra-anacreon-dev-ags-fr",
+            "bc-generic-webhook-uri":"buildconfigs/testing/webhooks/cb6c50e21a5c81d4/generic"
+        },
+        "55C4212D-9DDE-4B21-9F2C-4DE33B6D0290": {
+            "payloadSecret":"123456",
+            "expectedHeader": {
+                "X-GitHub-Event": "push"
+            },
             "namespace" : "infra-anacreon-dev-ags-fr",
             "bc-generic-webhook-uri":"buildconfigs/testing/webhooks/cb6c50e21a5c81d4/generic"
         }

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.kandefromparis.shyrka</groupId>
     <artifactId>anacreon</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
     <packaging>jar</packaging>
     <scm>
         <connection>scm:git:git://github.com/kanedafomparisfriends/anacreon.git</connection>

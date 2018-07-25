@@ -56,8 +56,9 @@ public class BuildCallVerticle extends AbstractVerticle implements Handler<Routi
     public static final String PEMCERTPATH = "pemcertpath";
     private static final String PAYLOAD_SECRET = "payloadSecret";
 
+    private static final String EXPECTED_HEADER = "expectedHeader";
     private static final String VALIDATE_PAYLOAD = "validatePayload";
-    
+
     private static final String X_HUB_SIGNATURE = "X-Hub-Signature";
 
     private HttpServer server;
@@ -230,7 +231,7 @@ public class BuildCallVerticle extends AbstractVerticle implements Handler<Routi
                                 .putHeader("content-type", "application/json; charset=utf-8")
                                 .end();
                         return;
-                    }                    
+                    }
                 } catch (NoSuchAlgorithmException ex) {
                     LOG.error(ex);
                 } catch (InvalidKeyException ex) {
@@ -240,7 +241,26 @@ public class BuildCallVerticle extends AbstractVerticle implements Handler<Routi
                 }
             }
 
+            if (config().getJsonObject(WEBHOOK, new JsonObject()).getJsonObject(idBuild, new JsonObject())
+                    .containsKey(EXPECTED_HEADER)) {
+                JsonObject expectedHeaders = config().getJsonObject(WEBHOOK, new JsonObject()).getJsonObject(idBuild, new JsonObject())
+                        .getJsonObject("expectedHeader");
+                Iterator<String> iterator = expectedHeaders.getMap().keySet().iterator();
+                while (iterator.hasNext()) {
 
+                    String header = iterator.next();
+                    if (!StringUtils.equals(expectedHeaders.getString(header), routingContext.request().getHeader(header))) {
+                        LOG.info("header {0} is not set properly", header);
+                        LOG.debug("header {0} expected id {1} value is {0}", header, expectedHeaders.getString(header), routingContext.request().getHeader(header));
+                        response
+                                .setStatusCode(417)
+                                .putHeader("content-type", "application/json; charset=utf-8")
+                                .end();
+                        return;
+                    }
+
+                }
+            }
 
             WebClient client = WebClient.create(vertx, options);
             LOG.debug("Calling : {0}", fullURL);
