@@ -34,28 +34,28 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-core</artifactId>
-            <version>3.5.1</version>
+            <version>3.8.5</version>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-web</artifactId>
-            <version>3.5.1</version>
+            <version>3.8.5</version>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId> 
             <artifactId>vertx-health-check</artifactId>
-            <version>3.5.1</version>
+            <version>3.8.4</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-unit</artifactId>
-            <version>3.5.1</version>
+            <version>3.8.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -67,18 +67,18 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.4</version>
+            <version>3.9</version>
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-web-client</artifactId>
-            <version>3.5.1</version>
+            <version>3.8.3</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.10</version>
+            <version>1.14</version>
             <type>jar</type>
         </dependency>
     </dependencies>
@@ -170,10 +170,10 @@
                             <alias>service</alias> 
                             <name>kanedafromparis/${project.artifactId}:${project.version}</name>
                             <build>                                
-                                <from>openjdk:8-jre-alpine3.7</from> 
+                                <!-- from>openjdk:8-jre-alpine3.7</from --> 
                                 <!-- from>fabric8/java-alpine-openjdk8-jre:latest</from-->
                                 <!-- from>adoptopenjdk/openjdk10:alpine</from -->
-                                <from>adoptopenjdk/openjdk10:alpine-slim</from>
+                                <from>adoptopenjdk/openjdk13:alpine-slim</from>
                                 <assembly>
                                     <basedir>/opt/${project.artifactId}</basedir>
                                     <mode>dir</mode>
